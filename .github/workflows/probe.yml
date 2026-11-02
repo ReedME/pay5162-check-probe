@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   worker:
-    name: probe worker
+    name: probe-required
     runs-on: ubuntu-latest
     permissions:
       checks: write
@@ -30,7 +30,5 @@ jobs:
               -f output[title]="$2" \
               -f output[summary]="$3"
           }
-          post failure "first-failure" "failure posted first by GITHUB_TOKEN"
-          sleep 2
-          post success "second-success" "later success posted by GITHUB_TOKEN"
-          echo "posted on ${HEAD}"
+          post failure "api-failure" "failure posted by GITHUB_TOKEN before the job completes"
+          echo "job exiting 0 after the api failure on ${HEAD}"
