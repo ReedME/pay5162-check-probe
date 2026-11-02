@@ -1,0 +1,36 @@
+name: probe
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  worker:
+    name: probe worker
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+    steps:
+      - name: Post required-name checks with GITHUB_TOKEN
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -eu
+          post() {
+            gh api --method POST -H "Accept: application/vnd.github+json" \
+              "repos/${REPO}/check-runs" \
+              -f name="probe-required" \
+              -f head_sha="$HEAD" \
+              -f status="completed" \
+              -f conclusion="$1" \
+              -f output[title]="$2" \
+              -f output[summary]="$3"
+          }
+          post success "first" "success posted by GITHUB_TOKEN"
+          sleep 2
+          post failure "second" "later failure posted by GITHUB_TOKEN"
+          echo "posted on ${HEAD}"
