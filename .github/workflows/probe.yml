@@ -30,7 +30,7 @@ jobs:
               -f output[title]="$2" \
               -f output[summary]="$3"
           }
-          post success "first" "success posted by GITHUB_TOKEN"
+          post failure "first-failure" "failure posted first by GITHUB_TOKEN"
           sleep 2
-          post failure "second" "later failure posted by GITHUB_TOKEN"
+          post success "second-success" "later success posted by GITHUB_TOKEN"
           echo "posted on ${HEAD}"
